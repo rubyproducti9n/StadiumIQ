@@ -106,10 +106,10 @@ export default function CrowdToggle({ matchId, onDataUpdated }) {
             />
           </div>
           {uploadError && (
-            <p className="text-xs text-red-600 font-medium">{uploadError}</p>
+            <p role="alert" className="text-xs text-red-700 font-medium">{uploadError}</p>
           )}
           {uploadSuccess && (
-            <p className="text-xs text-green-600 font-medium">✓ Crowd data uploaded & merged successfully!</p>
+            <p role="alert" className="text-xs text-green-700 font-medium">✓ Crowd data uploaded & merged successfully!</p>
           )}
         </div>
       ) : (

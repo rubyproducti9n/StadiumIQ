@@ -31,7 +31,6 @@ isSupported().then(supported => {
 });
 
 export function logCustomEvent(name, params = {}) {
-  console.log(`[Analytics Event Logged] ${name}`, params);
   if (analytics) {
     try {
       fbLogEvent(analytics, name, params);

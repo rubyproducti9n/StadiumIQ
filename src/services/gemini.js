@@ -3,7 +3,7 @@ import { canMakeRequest, logRequest } from '../utils/rateLimit';
 import { getCachedResponse, setCachedResponse } from '../utils/cache';
 import { isVagueQuestion, fetchWithRetry } from '../utils/errorHandler';
 import { logCustomEvent } from './analytics';
-import { useCrowd } from '../context/CrowdContext';
+import { CROWD_STORAGE_KEY, GEMINI_MODEL, MAX_RETRIES } from '../constants';
 
 export const SYSTEM_PROMPT = `You are StadiumIQ, an AI-powered smart assistant for FIFA World Cup 2026 stadiums in the USA.
 - You help fans and staff navigate stadiums, understand crowd conditions, find facilities, get transport info, and receive safety/accessibility support.
@@ -16,6 +16,15 @@ export const SYSTEM_PROMPT = `You are StadiumIQ, an AI-powered smart assistant f
 - Always be concise, helpful, and friendly. Do not make up information. If you do not know something specific, say so clearly.
 - Never discuss anything unrelated to stadium operations, FIFA 2026, navigation, facilities, crowds, transport, or safety.`;
 
+/**
+ * Builds the prompt string dynamically injecting the match contexts.
+ * @param {string} userMessage - Sanitized user input question.
+ * @param {Object} persona - Selected user persona information.
+ * @param {Object} stadium - Active stadium metrics metadata.
+ * @param {Object} crowdData - Current parsed stadium crowd data metrics.
+ * @param {string} [geminiContext=""] - Compiled crowd context from excel template.
+ * @returns {string} The formatted prompt string.
+ */
 export function buildPrompt(userMessage, persona, stadium, crowdData, geminiContext = "") {
   const personaLabel = persona?.label || 'Visitor';
   const stadiumName = stadium?.name || 'the stadium';
@@ -26,7 +35,7 @@ export function buildPrompt(userMessage, persona, stadium, crowdData, geminiCont
   let matchContext = geminiContext;
   if (!matchContext && stadium?.id) {
     try {
-      const stored = localStorage.getItem('stadiumiq_crowd_data');
+      const stored = localStorage.getItem(CROWD_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (parsed[stadium.id]?.gemini_context) {
@@ -51,6 +60,16 @@ export function buildPrompt(userMessage, persona, stadium, crowdData, geminiCont
   return `${contextBlock}\n${crowdBlock}\n${userMsgBlock}`;
 }
 
+/**
+ * Communicates with Gemini API to answer stadium queries.
+ * @param {string} userMessage - Raw user chat entry.
+ * @param {Object} persona - Currently active user persona structure.
+ * @param {Object} stadium - Active stadium details.
+ * @param {Object} crowdData - Match crowd operations metrics.
+ * @param {Function} [onRetry=null] - Backoff delay retry callback.
+ * @param {string} [geminiContext=""] - Explicit spreadsheet context string.
+ * @returns {Promise<string>} Gemini response text.
+ */
 export async function askGemini(userMessage, persona, stadium, crowdData, onRetry = null, geminiContext = "") {
   try {
     if (!isValidInput(userMessage)) {
@@ -77,7 +96,7 @@ export async function askGemini(userMessage, persona, stadium, crowdData, onRetr
     // Build Prompt with geminiContext
     const prompt = buildPrompt(cleanedMessage, persona, stadium, crowdData, geminiContext);
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
     const response = await fetchWithRetry(url, {
       method: 'POST',
@@ -99,7 +118,7 @@ export async function askGemini(userMessage, persona, stadium, crowdData, onRetr
           temperature: 0.7
         }
       })
-    }, 3, 1000, onRetry);
+    }, MAX_RETRIES, 1000, onRetry);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.statusText}`);
@@ -119,10 +138,14 @@ export async function askGemini(userMessage, persona, stadium, crowdData, onRetr
   }
 }
 
+/**
+ * Validates the configured Gemini key connection.
+ * @returns {Promise<boolean>} Resolves to true if key is valid.
+ */
 export async function testGeminiConnection() {
   try {
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
     const response = await fetchWithRetry(url, {
       method: 'POST',
@@ -132,15 +155,15 @@ export async function testGeminiConnection() {
       body: JSON.stringify({
         contents: [
           {
-            parts: [
-              {
-                text: "Say hello in one sentence."
-              }
-            ]
+            parts: [{ text: "Hello" }]
           }
-        ]
+        ],
+        generationConfig: {
+          maxOutputTokens: 10,
+          temperature: 0.1
+        }
       })
-    }, 3, 1000);
+    }, MAX_RETRIES, 1000);
 
     if (!response.ok) {
       return false;
@@ -154,6 +177,12 @@ export async function testGeminiConnection() {
   }
 }
 
+/**
+ * Analyzes the language of a text string.
+ * @param {string} text - Text to analyze.
+ * @param {Function} [onRetry=null] - Rate limit backoff callbacks.
+ * @returns {Promise<Object>} The language detection result.
+ */
 async function detectLanguage(text, onRetry = null) {
   try {
     const cached = sessionStorage.getItem('detected_language');
@@ -168,7 +197,7 @@ async function detectLanguage(text, onRetry = null) {
   }
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   let response;
   try {
@@ -196,7 +225,7 @@ Text to analyze:
           responseMimeType: "application/json"
         }
       })
-    }, 3, 1000, onRetry);
+    }, MAX_RETRIES, 1000, onRetry);
   } catch (err) {
     throw new Error("LANGUAGE_DETECTION_FAILED");
   }
@@ -225,9 +254,17 @@ Text to analyze:
   throw new Error("LANGUAGE_DETECTION_FAILED");
 }
 
+/**
+ * Translates a text string.
+ * @param {string} text - Text to translate.
+ * @param {string} fromLang - Source language.
+ * @param {string} toLang - Target language.
+ * @param {Function} [onRetry=null] - Rate limit retry call.
+ * @returns {Promise<string>} The translated text.
+ */
 async function translateText(text, fromLang, toLang, onRetry = null) {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   const response = await fetchWithRetry(url, {
     method: 'POST',
@@ -252,7 +289,7 @@ Text to translate:
         temperature: 0.3
       }
     })
-  }, 3, 1000, onRetry);
+  }, MAX_RETRIES, 1000, onRetry);
 
   if (!response.ok) {
     throw new Error(`Failed to translate text to ${toLang}`);
@@ -267,6 +304,13 @@ Text to translate:
   return resultText.trim();
 }
 
+/**
+ * Intercepts Gemini calls to translate incoming/outgoing strings if non-English language is detected.
+ * @param {string} userInput - The user's query message.
+ * @param {Function} geminiCall - The underlying askGemini invocation promise.
+ * @param {Function} [onRetry=null] - Delay timer callback parameters.
+ * @returns {Promise<string>} The localized output string.
+ */
 export async function wrapWithTranslation(userInput, geminiCall, onRetry = null) {
   let detected = null;
   try {
@@ -291,6 +335,12 @@ export async function wrapWithTranslation(userInput, geminiCall, onRetry = null)
   return translatedResponse;
 }
 
+/**
+ * Generates a 3-line smart operations overview summary banner.
+ * @param {Object} stadium - Active stadium details.
+ * @param {Object} crowdData - Match crowd metrics.
+ * @returns {Promise<string>} The generated summary string.
+ */
 export async function generateSmartSummary(stadium, crowdData) {
   const stadiumName = stadium?.name || 'the stadium';
   const city = stadium?.city || 'USA';
@@ -305,9 +355,9 @@ export async function generateSmartSummary(stadium, crowdData) {
     }
   }
 
-  const cacheKey = `smart_summary_${stadium?.id || 'stadium'}_${fillPct}`;
+  const cacheKey = `stadiumiq_summary_${stadium?.id || 'default'}`;
   try {
-    const cached = sessionStorage.getItem(cacheKey);
+    const cached = localStorage.getItem(cacheKey);
     if (cached) {
       return cached;
     }
@@ -321,7 +371,7 @@ export async function generateSmartSummary(stadium, crowdData) {
 - Keep it friendly, positive, and strictly under 3 sentences. Do not use markdown bullet points.`;
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   const response = await fetchWithRetry(url, {
     method: 'POST',
@@ -339,7 +389,7 @@ export async function generateSmartSummary(stadium, crowdData) {
         temperature: 0.5
       }
     })
-  }, 3, 1000);
+  }, MAX_RETRIES, 1000);
 
   if (!response.ok) {
     throw new Error("Failed to generate smart summary");
@@ -350,7 +400,7 @@ export async function generateSmartSummary(stadium, crowdData) {
   const summary = resultText ? resultText.trim() : "Live match details are loaded. Safe travels to the stadium!";
 
   try {
-    sessionStorage.setItem(cacheKey, summary);
+    localStorage.setItem(cacheKey, summary);
   } catch (e) {
     console.error(e);
   }
@@ -358,6 +408,11 @@ export async function generateSmartSummary(stadium, crowdData) {
   return summary;
 }
 
+/**
+ * Classifies a user question's intent.
+ * @param {string} text - User message input.
+ * @returns {Promise<string>} The classified sentiment string.
+ */
 export async function classifySentiment(text) {
   const prompt = `Classify the sentiment/intent of the following user question into exactly one of these categories: hype, tactical, logistical, emotional.
 Return only the category name in lowercase (no punctuation, no other text).
@@ -365,7 +420,7 @@ Return only the category name in lowercase (no punctuation, no other text).
 User question: "${text}"`;
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
 
   const response = await fetchWithRetry(url, {
     method: 'POST',
@@ -383,7 +438,7 @@ User question: "${text}"`;
         temperature: 0.1
       }
     })
-  }, 3, 1000);
+  }, MAX_RETRIES, 1000);
 
   if (!response.ok) {
     return 'logistical';

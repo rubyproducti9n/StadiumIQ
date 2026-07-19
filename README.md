@@ -1,29 +1,20 @@
 # StadiumIQ ⚽ — FIFA World Cup 2026 Smart Stadium Assistant
 
-## Chosen Vertical
-Fan Navigation + Multilingual Assistance + Crowd Management + Accessibility Support
+## Problem Statement
+FIFA World Cup 2026 spans 3 countries, 16 cities, 48 teams.
+Fans speak 40+ languages, arrive at unfamiliar stadiums,
+and have no unified AI assistant to help them navigate the experience.
 
-## Hackathon Submission Description
-StadiumIQ is a serverless, zero-cost web assistant designed to optimize stadium operations and fan experience for the FIFA World Cup 2026. 
+## Solution
+StadiumIQ is a GenAI-powered fan companion that:
+- Answers any fan question in their native language
+- Provides real-time crowd intelligence and stadium context
+- Works at zero cost using Gemini 2.5 Flash free tier
 
-Powered by **Gemini 2.5 Flash** and **GCP/Firestore**, StadiumIQ injects live, real-time crowd data (managed via automated API polling or manual CSV/JSON uploads) directly into the LLM context. This enables context-aware Q&A, crowd density updates, facility locations, and dynamic match summaries. 
-
-The app features native multilingual support. It handles smart language detection and translation dynamically, defaulting to a custom selection dropdown (EN, ES, FR, AR, PT, DE) in case of detection failures. 
-
-To ensure production-grade stability, StadiumIQ implements robust edge-case handling:
-- **Exponential backoff retry** for Gemini API rate limits (429)
-- **Local keyword boundary checks** to block off-topic queries, saving API resources
-- **Auto-flags** for missing match data (`⚠️ Live data unavailable`)
-
-Google Analytics 4 logs custom GCP signals (`match_viewed`, `question_asked`, `language_detected`, `crowd_data_loaded`), making all activities traceable via GCP Logs Explorer. The UI incorporates Leaflet.js maps for interactive venue navigation and integrates Google AdSense banners for immediate monetization.
-
-StadiumIQ eliminates navigation stress, unites international fans in their native languages, and transforms stadium entry from a bottleneck into a seamless experience.
-
-## Persona
-International fans, venue staff, and volunteers attending or working at FIFA World Cup 2026 stadiums in the USA.
-
-## Problem Statement Alignment
-StadiumIQ is a GenAI-powered web assistant that enhances the stadium experience for fans and improves operational efficiency for staff. It uses Google Gemini AI to provide real-time navigation, crowd awareness, multilingual support, and accessibility guidance — directly addressing the FIFA World Cup 2026 challenge verticals.
+## GenAI Usage (mandatory)
+- Model: gemini-2.5-flash-preview-05-20
+- Use cases: Q&A, translation, sentiment tagging, match summaries
+- Prompt strategy: crowd context injection per query
 
 ## How It Works
 1. Users select their persona (Fan or Staff/Volunteer) and their stadium.

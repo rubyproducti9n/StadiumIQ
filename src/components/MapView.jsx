@@ -29,8 +29,8 @@ export default function MapView({ stadium }) {
     mapInstanceRef.current = map;
 
     // Add markers
-    const mainMarker = addStadiumMarker(map, stadium.lat, stadium.lng, stadium.name);
-    const gateMarkers = addGateMarkers(map, stadium.gates, stadium.lat, stadium.lng);
+    addStadiumMarker(map, stadium.lat, stadium.lng, stadium.name);
+    addGateMarkers(map, stadium.gates, stadium.lat, stadium.lng);
 
     // Cleanup on unmount / stadium change
     return () => {

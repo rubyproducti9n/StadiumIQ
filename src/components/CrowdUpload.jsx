@@ -60,7 +60,7 @@ export default function CrowdUpload() {
       setSuccessMsg(`${count} matches loaded. Crowd context ready.`);
       setPendingData(null);
       setPreviewRows([]);
-    } catch (err) {
+    } catch {
       setErrorMsg("Failed to store crowd data");
     }
   };
@@ -83,13 +83,14 @@ export default function CrowdUpload() {
           type="file"
           accept=".xlsx,.xls"
           onChange={handleFileChange}
+          aria-label="Upload crowd data Excel file"
           className="w-full text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer border border-gray-200 rounded-md p-1 bg-gray-50"
         />
       </div>
 
       {/* Storage quota warning */}
       {storageError && (
-        <div className="p-2.5 bg-red-50 text-red-700 border border-red-100 rounded text-xs flex items-start gap-1.5">
+        <div role="alert" className="p-2.5 bg-red-50 text-red-700 border border-red-100 rounded text-xs flex items-start gap-1.5">
           <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
@@ -99,7 +100,7 @@ export default function CrowdUpload() {
 
       {/* Custom general error messages */}
       {errorMsg && (
-        <div className="p-2.5 bg-red-50 text-red-700 border border-red-100 rounded text-xs font-medium flex items-start gap-1.5">
+        <div role="alert" className="p-2.5 bg-red-50 text-red-700 border border-red-100 rounded text-xs font-medium flex items-start gap-1.5">
           <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -109,7 +110,7 @@ export default function CrowdUpload() {
 
       {/* Success Messages */}
       {successMsg && (
-        <div className="p-2.5 bg-green-50 text-green-700 border border-green-100 rounded text-xs font-medium flex items-start gap-1.5">
+        <div role="alert" className="p-2.5 bg-green-50 text-green-700 border border-green-100 rounded text-xs font-medium flex items-start gap-1.5">
           <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -119,8 +120,8 @@ export default function CrowdUpload() {
 
       {/* Specific row parsing errors */}
       {fileErrorRows.length > 0 && (
-        <div className="space-y-1">
-          <p className="text-xs font-semibold text-red-600">Failed rows details:</p>
+        <div role="alert" className="space-y-1">
+          <p className="text-xs font-semibold text-red-700">Failed rows details:</p>
           <div className="max-h-24 overflow-y-auto border border-red-100 bg-red-50 p-2 rounded space-y-1">
             {fileErrorRows.map((err, idx) => (
               <p key={idx} className="text-[10px] text-red-700 font-mono">
@@ -188,3 +189,5 @@ export default function CrowdUpload() {
     </div>
   );
 }
+
+CrowdUpload.propTypes = {};

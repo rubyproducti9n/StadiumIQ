@@ -26,6 +26,6 @@ export function sanitizeResponse(text) {
 export function isValidInput(text) {
   if (typeof text !== 'string') return false;
   const trimmed = text.trim();
-  if (trimmed.length < 2 || trimmed.length > 500) return false;
+  if (trimmed.length < 2) return false;
   return true;
 }

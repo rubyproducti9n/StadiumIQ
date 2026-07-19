@@ -1,7 +1,19 @@
 import * as XLSX from 'xlsx';
+import { CHANT_MIN, CHANT_MAX } from '../constants';
 
+/**
+ * Parses crowd operations Excel spreadsheet data.
+ * @param {ArrayBuffer} fileBuffer - The binary workbook data buffer.
+ * @returns {Object} The parsed data mapping match IDs to normalized records, plus any parsing error log details.
+ */
 export function parseCrowdExcel(fileBuffer) {
-  const workbook = XLSX.read(fileBuffer, { type: 'array' });
+  let workbook;
+  try {
+    workbook = XLSX.read(fileBuffer, { type: 'array' });
+  } catch (err) {
+    throw new Error("Failed to read Excel workbook structure: " + err.message);
+  }
+
   const firstSheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[firstSheetName];
   
@@ -49,12 +61,12 @@ export function parseCrowdExcel(fileBuffer) {
       ? secondaryRaw.toString().split(',').map(s => s.trim()).filter(Boolean) 
       : [];
 
-    // chant_intensity: parse as int, clamp 1-10
+    // chant_intensity: parse as int, clamp CHANT_MIN-CHANT_MAX
     let chant_intensity = parseInt(rowObj['chant_intensity'], 10);
     if (isNaN(chant_intensity)) {
       chant_intensity = 5;
     } else {
-      chant_intensity = Math.max(1, Math.min(10, chant_intensity));
+      chant_intensity = Math.max(CHANT_MIN, Math.min(CHANT_MAX, chant_intensity));
     }
 
     // incident_flags: lowercase trim, default "none" if empty/null

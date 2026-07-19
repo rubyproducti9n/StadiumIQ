@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export default function CrowdDashboard({ crowdData, stadium, smartSummary, isSummaryLoading }) {
   if (!crowdData) {
@@ -16,8 +17,8 @@ export default function CrowdDashboard({ crowdData, stadium, smartSummary, isSum
 
   const getFillColor = (pct) => {
     if (pct < 70) return 'text-green-600 bg-green-50 border-green-200';
-    if (pct < 90) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-    return 'text-red-600 bg-red-50 border-red-200';
+    if (pct < 90) return 'text-yellow-700 bg-yellow-50 border-yellow-200';
+    return 'text-red-700 bg-red-50 border-red-200';
   };
 
   const getStatusBadge = (status) => {
@@ -36,9 +37,9 @@ export default function CrowdDashboard({ crowdData, stadium, smartSummary, isSum
     ? crowdData.overallFillPercentage 
     : Math.round((crowdData.occupancy_pct || 0) * 100);
 
-  let overallColorClass = 'text-green-600';
-  if (fillPct >= 70 && fillPct < 90) overallColorClass = 'text-yellow-500';
-  if (fillPct >= 90) overallColorClass = 'text-red-600';
+  let overallColorClass = 'text-green-700';
+  if (fillPct >= 70 && fillPct < 90) overallColorClass = 'text-yellow-700';
+  if (fillPct >= 90) overallColorClass = 'text-red-700';
 
   // Adapt gates: if excel data, let's map fan_zone_A, B, C, D as Gates/Zones
   const gates = crowdData.gates || [
@@ -164,3 +165,10 @@ export default function CrowdDashboard({ crowdData, stadium, smartSummary, isSum
     </div>
   );
 }
+
+CrowdDashboard.propTypes = {
+  crowdData: PropTypes.object,
+  stadium: PropTypes.object,
+  smartSummary: PropTypes.string,
+  isSummaryLoading: PropTypes.bool
+};

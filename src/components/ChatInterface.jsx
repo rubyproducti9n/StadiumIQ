@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { logCustomEvent } from '../services/analytics';
 
 export default function ChatInterface({
@@ -7,7 +8,6 @@ export default function ChatInterface({
   error = null,
   onSendMessage,
   currentPersona,
-  crowdData,
   languageDetectionFailed = false,
   setLanguageDetectionFailed
 }) {
@@ -126,7 +126,7 @@ export default function ChatInterface({
 
       {/* Error Display */}
       {error && (
-        <div className="px-4 py-2 bg-red-100 border-t border-b border-red-200 text-red-700 text-sm">
+        <div role="alert" className="px-4 py-2 bg-red-100 border-t border-b border-red-200 text-red-700 text-sm">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -177,7 +177,7 @@ export default function ChatInterface({
         <button
           type="submit"
           disabled={isLoading || !inputText.trim()}
-          aria-label="Send message"
+          aria-label="Send message to StadiumIQ"
           className="px-4 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors"
         >
           Send
@@ -186,3 +186,18 @@ export default function ChatInterface({
     </div>
   );
 }
+
+ChatInterface.propTypes = {
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    role: PropTypes.string,
+    text: PropTypes.string,
+    timestamp: PropTypes.number
+  })),
+  isLoading: PropTypes.bool,
+  error: PropTypes.string,
+  onSendMessage: PropTypes.func.isRequired,
+  currentPersona: PropTypes.object,
+  languageDetectionFailed: PropTypes.bool,
+  setLanguageDetectionFailed: PropTypes.func
+};
