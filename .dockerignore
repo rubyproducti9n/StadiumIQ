@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+.git
+.env
+run_project.bat
+npm-debug.log
+yarn-debug.log
+yarn-error.log
