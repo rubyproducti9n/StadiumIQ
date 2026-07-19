@@ -17,7 +17,7 @@ Object.defineProperty(window, 'localStorage', { value: localStorageMock, writabl
 
 // Mock import.meta.env variables for vitest
 vi.stubEnv('VITE_GEMINI_API_KEY', 'mock_api_key');
-vi.stubEnv('VITE_FIREBASE_API_KEY', 'AIzaSyBu31rPu2D6P4VuLu8kb4j3anXNzRh6Uyg');
+vi.stubEnv('VITE_FIREBASE_API_KEY', 'mock_firebase_api_key');
 vi.stubEnv('VITE_FIREBASE_AUTH_DOMAIN', 'stadiumiq-6ceba.firebaseapp.com');
 vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'stadiumiq-6ceba');
 vi.stubEnv('VITE_FIREBASE_STORAGE_BUCKET', 'stadiumiq-6ceba.firebasestorage.app');
