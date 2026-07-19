@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1784471094562" clover="3.2.0">
-  <project timestamp="1784471094563" name="All files">
-    <metrics statements="669" coveredstatements="237" conditionals="525" coveredconditionals="163" methods="125" coveredmethods="32" elements="1319" coveredelements="432" complexity="0" loc="669" ncloc="669" packages="7" files="25" classes="25"/>
+<coverage generated="1784477225845" clover="3.2.0">
+  <project timestamp="1784477225845" name="All files">
+    <metrics statements="676" coveredstatements="237" conditionals="535" coveredconditionals="163" methods="125" coveredmethods="32" elements="1336" coveredelements="432" complexity="0" loc="676" ncloc="676" packages="7" files="25" classes="25"/>
     <package name="src">
       <metrics statements="5" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <file name="App.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\App.jsx">
@@ -17,19 +17,26 @@
       </file>
     </package>
     <package name="src.components">
-      <metrics statements="174" coveredstatements="0" conditionals="189" coveredconditionals="0" methods="45" coveredmethods="0"/>
+      <metrics statements="181" coveredstatements="0" conditionals="199" coveredconditionals="0" methods="45" coveredmethods="0"/>
       <file name="AccessibilityPanel.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\AccessibilityPanel.jsx">
         <metrics statements="3" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="4" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="6" count="0" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
       </file>
       <file name="AdBanner.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\AdBanner.jsx">
-        <metrics statements="4" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <metrics statements="11" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="2" coveredmethods="0"/>
         <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="6" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="12" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
       </file>
       <file name="ChatInterface.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\ChatInterface.jsx">
         <metrics statements="38" coveredstatements="0" conditionals="41" coveredconditionals="0" methods="12" coveredmethods="0"/>
@@ -95,9 +102,9 @@
         <line num="52" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="60" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="66" count="0" type="stmt"/>
-        <line num="110" count="0" type="stmt"/>
-        <line num="126" count="0" type="stmt"/>
-        <line num="151" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
       </file>
       <file name="CrowdToggle.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\CrowdToggle.jsx">
         <metrics statements="36" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="8" coveredmethods="0"/>
@@ -183,14 +190,14 @@
         <line num="62" count="0" type="stmt"/>
         <line num="64" count="0" type="stmt"/>
         <line num="68" count="0" type="stmt"/>
-        <line num="114" count="0" type="stmt"/>
-        <line num="148" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
       </file>
       <file name="Header.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\Header.jsx">
         <metrics statements="3" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="5" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
         <line num="18" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
       </file>
       <file name="MapView.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\MapView.jsx">
         <metrics statements="17" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="3" coveredmethods="0"/>
@@ -213,7 +220,7 @@
         <line num="48" count="0" type="stmt"/>
       </file>
       <file name="PersonaToggle.jsx" path="C:\Users\omlok\Documents\prompt-war\StadiumIQ\src\components\PersonaToggle.jsx">
-        <metrics statements="4" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <metrics statements="4" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="3" coveredmethods="0"/>
         <line num="5" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
         <line num="9" count="0" type="stmt"/>

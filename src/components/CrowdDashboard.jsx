@@ -87,7 +87,10 @@ export default function CrowdDashboard({ crowdData, stadium, smartSummary, isSum
       ) : smartSummary ? (
         <div className="p-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-sm">
           <h4 className="font-bold text-sm mb-1 flex items-center gap-1.5">
-            <span>✨ StadiumIQ Smart Summary</span>
+            <svg className="w-4 h-4 text-yellow-300 animate-pulse" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            <span>StadiumIQ Smart Summary</span>
           </h4>
           <p className="text-xs leading-relaxed opacity-95 whitespace-pre-line">{smartSummary}</p>
         </div>

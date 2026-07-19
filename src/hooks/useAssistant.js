@@ -117,7 +117,7 @@ export default function useAssistant() {
 
       // Prepend warning if crowdData / live match data is missing
       if (!crowdData) {
-        assistantText = "⚠️ Live data unavailable\n\n" + assistantText;
+        assistantText = "[Notice: Live data unavailable]\n\n" + assistantText;
       }
 
       const assistantMsg = {
